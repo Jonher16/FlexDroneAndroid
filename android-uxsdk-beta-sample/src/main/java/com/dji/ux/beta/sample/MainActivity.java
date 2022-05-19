@@ -51,6 +51,7 @@ import com.dji.ux.beta.sample.showcase.defaultlayout.DefaultLayoutActivity;
 import com.dji.ux.beta.sample.showcase.map.MapWidgetActivity;
 import com.dji.ux.beta.sample.showcase.widgetlist.WidgetsActivity;
 import com.dji.ux.beta.sample.util.MapUtil;
+import com.dji.ux.beta.sample.util.Universal;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +70,9 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
+import dji.ux.beta.cameracore.widget.fpvinteraction.FPVInteractionWidget;
+import dji.ux.beta.cameracore.widget.fpvinteraction.FPVInteractionWidgetModel;
+import dji.ux.beta.cameracore.widget.fpvinteraction.GimbalControlView;
 import dji.ux.beta.core.util.SettingDefinitions;
 
 /**
@@ -79,7 +83,7 @@ import dji.ux.beta.core.util.SettingDefinitions;
 public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     //region Constants
-    private static final String LAST_USED_BRIDGE_IP = "bridgeip";
+    private static final String LAST_USED_BRIDGE_IP = "172.20.85.105";
     private static final int REQUEST_PERMISSION_CODE = 12345;
     private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
             Manifest.permission.VIBRATE, // Gimbal rotation
@@ -96,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
             Manifest.permission.READ_PHONE_STATE, // Device UUID accessed upon registration
             Manifest.permission.RECORD_AUDIO // Speaker accessory
     };
+
     private static final String TIME_FORMAT = "MMM dd, yyyy 'at' h:mm:ss a";
     private static final String TAG = "MainActivity";
     //endregion
@@ -107,23 +112,29 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     @BindView(R.id.text_view_product_name)
     protected TextView productNameTextView;
     @BindView(R.id.edit_text_bridge_ip)
-    protected EditText bridgeModeEditText;
+    public EditText bridgeModeEditText;
     @BindView(R.id.text_view_logs)
     protected TextView logsTextView;
+    public FPVInteractionWidget fpvInteractionWidget;
+    public GimbalControlView gimbalControlView;
+    public FPVInteractionWidgetModel widgetModel;
     //region Fields
     private AtomicBoolean isRegistrationInProgress = new AtomicBoolean(false);
     private int lastProgress = -1;
-    private DJISDKManager.SDKManagerCallback registrationCallback = new DJISDKManager.SDKManagerCallback() {
 
+    private DJISDKManager.SDKManagerCallback registrationCallback = new DJISDKManager.SDKManagerCallback() {
         @Override
         public void onRegister(DJIError error) {
+
             isRegistrationInProgress.set(false);
+
             if (error == DJISDKError.REGISTRATION_SUCCESS) {
                 DJISDKManager.getInstance().startConnectionToProduct();
                 runOnUiThread(() -> {
                     addLog("Registration succeeded");
                     addLog("Connecting to product");
                     registeredTextView.setText(R.string.registered);
+
                 });
             } else {
                 runOnUiThread(() -> addLog("Registration failed"));
@@ -208,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
     public static boolean isStarted() {
         return isAppStarted;
     }
+
+
 
     //region Lifecycle
     @Override
@@ -339,13 +352,15 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
      */
     private void handleBridgeIPTextChange() {
         // the user is done typing.
-        final String bridgeIP = bridgeModeEditText.getText().toString();
 
-        if (!TextUtils.isEmpty(bridgeIP)) {
-            DJISDKManager.getInstance().enableBridgeModeWithBridgeAppIP(bridgeIP);
-            addLog("BridgeMode ON!\nIP: " + bridgeIP);
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(LAST_USED_BRIDGE_IP, bridgeIP).apply();
-        }
+        final String bridgeIP = bridgeModeEditText.getText().toString();
+        Universal.setIp(bridgeIP);
+        addLog("New FlexDrone server IP: " + bridgeIP);
+//        if (!TextUtils.isEmpty(bridgeIP)) {
+//            DJISDKManager.getInstance().enableBridgeModeWithBridgeAppIP(bridgeIP);
+//            addLog("BridgeMode ON!\nIP: " + bridgeIP);
+//            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(LAST_USED_BRIDGE_IP, bridgeIP).apply();
+//        }
     }
 
     /**

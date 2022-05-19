@@ -37,14 +37,18 @@ import dji.ux.beta.core.communication.GlobalPreferencesManager;
 
 import static com.dji.ux.beta.sample.DJIConnectionControlActivity.ACCESSORY_ATTACHED;
 
+
 /**
  * An application that loads the SDK classes.
  */
 public class SampleApplication extends Application {
 
+
     @Override
     public void onCreate() {
+
         super.onCreate();
+
         //For the global preferences to take effect, this must be done before the widgets are initialized
         //If this is not done, no global preferences will take effect or persist across app restarts
         GlobalPreferencesManager.initialize(new DefaultGlobalPreferences(this));
@@ -54,6 +58,8 @@ public class SampleApplication extends Application {
         filter.addAction(ACCESSORY_ATTACHED);
         registerReceiver(br, filter);
     }
+
+
 
     @Override
     protected void attachBaseContext(Context paramContext) {

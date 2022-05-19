@@ -31,10 +31,18 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 import com.dji.ux.beta.sample.R;
+import com.dji.ux.beta.sample.SocketHandler;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
+import butterknife.internal.Utils;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+
+import java.net.URISyntaxException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,7 +65,8 @@ import dji.ux.beta.map.widget.map.MapWidget;
 import dji.ux.beta.training.widget.simulatorcontrol.SimulatorControlWidget;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
-
+import android.widget.Toast;
+import android.view.Gravity;
 /**
  * Displays a sample layout of widgets similar to that of the various DJI apps.
  */
@@ -80,7 +89,6 @@ public class DefaultLayoutActivity extends AppCompatActivity {
     protected ConstraintLayout parentView;
     @BindView(R.id.widget_panel_system_status_list)
     protected SystemStatusListPanelWidget systemStatusListPanelWidget;
-
     @BindView(R.id.widget_rtk)
     protected RTKWidget rtkWidget;
     @BindView(R.id.widget_simulator_control)
@@ -96,12 +104,118 @@ public class DefaultLayoutActivity extends AppCompatActivity {
     private UserAccountLoginWidget userAccountLoginWidget;
     //endregion
 
+    private void startSocket(){
+        SocketHandler handler = SocketHandler.INSTANCE;
+        handler.setSocket();
+        handler.establishConnection();
+        Socket mSocket = handler.getSocket();
+        mSocket.on("gimbalcommand" , args -> {
+            String command = args[0].toString();
+            switch(command){
+                case "GET_GIMBAL_STATE":
+                    boolean gimbalState = false;
+                    try {
+                        //gimbalState = widgetModel.isGimbalControlEnabled();
+                    } catch(Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    String gimbalStateString = "Gimbal state: " + gimbalState;
+                    mSocket.emit("uxmsg", gimbalStateString);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //addLog(gimbalStateString);
+                        }
+                    });
+                case "UNLOCK":
+
+                    try {
+                        fpvInteractionWidget = Utils.findRequiredViewAsType(findViewById(android.R.id.content), R.id.widget_fpv_interaction, "field 'fpvInteractionWidget'", FPVInteractionWidget.class);
+                        fpvInteractionWidget.setGimbalControlEnabled(true);
+                    } catch(Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+                case "LOCK":
+                    try {
+                        fpvInteractionWidget.setGimbalControlEnabled(false);
+                    } catch(Exception e){
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+                case "UP":
+                    try {
+
+                        fpvInteractionWidget.rotateGimbal(0,0,0,-80);
+                    } catch(Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+                case "DOWN":
+                    try {
+                        fpvInteractionWidget.rotateGimbal(0, 0, 0, 80);
+                    } catch (Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+                case "RIGHT":
+                    try {
+                        fpvInteractionWidget.rotateGimbal(0, 0, 80, 0);
+                    } catch (Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+                case "LEFT":
+                    try {
+                        fpvInteractionWidget.rotateGimbal(0, 0, -80, 0);
+                    } catch(Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+                case "STOP":
+                    try {
+                        fpvInteractionWidget.stopGimbalRotation();
+                    } catch(Exception e) {
+                        mSocket.emit("uxmsg", "Error in app: "+e);
+                    }
+                    break;
+            };
+            mSocket.emit("uxmsg", "Received command in app: "+args[0].toString());
+            String command_log = "Command received from server: " + command;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //addLog(command_log);
+                }
+            });
+        });
+        mSocket.on("uxconnection" , args -> {
+
+            //boolean gimbalUp = fpvInteractionWidget.isGimbalControlEnabled();
+            //mSocket.emit("uxmsg", "Gimbal status: " + gimbalUp);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //addLog("Connection with FlexDrone server established");
+                    Toast toast = Toast.makeText(getApplicationContext(), "Connection with FlexDrone established", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                    toast.show();
+                }
+            });
+
+        });
+        mSocket.emit("uxconnection", "Connection with DJI UX app established.");
+
+        //addLog("Starting connection with FlexDrone server");
+
+    }
+
     //region Lifecycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_default_layout);
-
+        startSocket();
         widgetHeight = (int) getResources().getDimension(R.dimen.mini_map_height);
         widgetWidth = (int) getResources().getDimension(R.dimen.mini_map_width);
         widgetMargin = (int) getResources().getDimension(R.dimen.mini_map_margin);
@@ -140,12 +254,17 @@ public class DefaultLayoutActivity extends AppCompatActivity {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) userAccountLoginWidget.getLayoutParams();
         params.topMargin = (deviceHeight / 10) + (int) DisplayUtil.dipToPx(this, 10);
         userAccountLoginWidget.setLayoutParams(params);
+        fpvInteractionWidget.rotateGimbal(0,0,20,0);
+
     }
 
     @Override
     protected void onDestroy() {
         mapWidget.onDestroy();
         super.onDestroy();
+        SocketHandler handler = SocketHandler.INSTANCE;
+        Socket mSocket = handler.getSocket();
+        mSocket.disconnect();
     }
 
     @Override
@@ -365,6 +484,7 @@ public class DefaultLayoutActivity extends AppCompatActivity {
             p.bottomMargin = margin;
             view.requestLayout();
         }
+
     }
     //endregion
 }

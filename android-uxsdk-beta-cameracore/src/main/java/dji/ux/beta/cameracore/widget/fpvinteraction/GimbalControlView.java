@@ -244,6 +244,7 @@ public class GimbalControlView extends FrameLayout {
      */
     @Nullable
     public Drawable getGimbalArrowIcon() {
+
         return gimbalArrow.getDrawable();
     }
 

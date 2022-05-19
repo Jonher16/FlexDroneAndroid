@@ -452,7 +452,7 @@ public class FPVInteractionWidget extends ConstraintLayoutWidget implements View
      * @param x      The x coordinate the of the point the user dragged the gimbal controls to.
      * @param y      The y coordinate the of the point the user dragged the gimbal controls to.
      */
-    private void rotateGimbal(float firstX, float firstY, float x, float y) {
+    public void rotateGimbal(float firstX, float firstY, float x, float y) {
         if (gimbalMoveDisposable == null) {
             toggleGimbalRotateBySpeed();
         }
@@ -467,7 +467,7 @@ public class FPVInteractionWidget extends ConstraintLayoutWidget implements View
     /**
      * Stop rotating the gimbal.
      */
-    private void stopGimbalRotation() {
+    public void stopGimbalRotation() {
         if (gimbalMoveDisposable != null && !gimbalMoveDisposable.isDisposed()) {
             gimbalMoveDisposable.dispose();
             gimbalMoveDisposable = null;
