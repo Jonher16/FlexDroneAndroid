@@ -8,6 +8,10 @@ With the UX SDK 5.0 version we are introducing an easy way to customize all the 
 
 Check out our sample app code in this repository with instructions on how to get started [here](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/wiki/Sample-Application-Tutorial).
 
+## FlexDrone 
+
+This UX App code was edited in order to be compatible with FlexDrone server. A Socket.io server was installed in order to communicate FlexDrone server woth this app.
+Bridge IP variable was reused in order to define the FlexDrone server Ip to connect to
 
 ## Installation
 
@@ -18,19 +22,7 @@ Read the [documentation for installation](https://github.com/dji-sdk/Mobile-UXSD
 You can find the UX SDK documentation on the [wiki](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/wiki). This includes -
 * [UX SDK 5.0 overview and main concepts](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/wiki/UX-SDK-5.0-Overview)
 * [Documentation for all the individual widgets and panels](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/wiki/UX-SDK-Modules)
-* [Sample app tutorial](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/wiki/Sample-Application-Tutorial)
-
-## How to Contribute
-
-As always, the DJI Dev Team is committed to improving your developer experience. Please follow our guidelines on the [CONTRIBUTING.md](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/blob/master/CONTRIBUTING.md) file for filling out any bugs or feature requests, contributing to the code base, or how to get support.
-If you have any other questions, please send an email to dev@dji.com. We recommend frequently checking the Github repositories for changes and new releases.
-You can also post questions, keep up to date on DJI developer news and contribute to the community by visiting [DJI's Developer Forum](https://forum.dji.com/forum-139-1.html?from=developer)
-
-## Future Plans
-
-We are eager to give you a sneak peek, and are very interested in receiving your feedback and suggestions. Please refer to the wiki or the release notes for the full list of elements that the Beta 5 version makes available.
-
-Our long-term plan is for this framework to reach feature parity with the current UX SDK 4.x release. The core team is currently working on porting the remaining widgets and other APIs to the new architecture and we will open source them in additional future Beta releases as they are completed. We welcome your feedback on the architecture and your ideas for additional widgets, including those not included in prior UX SDK releases, as well as your contributions and PRs for any ***currently open-sourced features***.
+* [Sample app tutorial](https://github.com/dji-sdk/Mobile-UXSDK-Beta-Android/wiki/Sample-Application-Tutorial).
 
 ## License
 
