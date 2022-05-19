@@ -13,9 +13,9 @@ Check out our sample app code in this repository with instructions on how to get
 This UX App code was edited in order to be compatible with FlexDrone server. A Socket.io server was installed in order to communicate FlexDrone server woth this app.
 Bridge IP variable was reused in order to define the FlexDrone server Ip to connect to.
 
-File where the Socket.io connection is defined: https://github.com/Jonher16/FlexDroneAndroid/blob/master/android-uxsdk-beta-sample/src/main/java/com/dji/ux/beta/sample/SocketHandler.kt
-File where Socket.io connection is carried out: https://github.com/Jonher16/FlexDroneAndroid/blob/master/android-uxsdk-beta-sample/src/main/java/com/dji/ux/beta/sample/showcase/defaultlayout/DefaultLayoutActivity.java
-File where FlexDrone IP is defined and used statically over files: https://github.com/Jonher16/FlexDroneAndroid/blob/master/android-uxsdk-beta-sample/src/main/java/com/dji/ux/beta/sample/util/Universal.java
+- File where the Socket.io connection is defined: https://github.com/Jonher16/FlexDroneAndroid/blob/master/android-uxsdk-beta-sample/src/main/java/com/dji/ux/beta/sample/SocketHandler.kt
+- File where Socket.io connection is carried out: https://github.com/Jonher16/FlexDroneAndroid/blob/master/android-uxsdk-beta-sample/src/main/java/com/dji/ux/beta/sample/showcase/defaultlayout/DefaultLayoutActivity.java
+- File where FlexDrone IP is defined and used statically over files: https://github.com/Jonher16/FlexDroneAndroid/blob/master/android-uxsdk-beta-sample/src/main/java/com/dji/ux/beta/sample/util/Universal.java
 
 ## Installation
 
