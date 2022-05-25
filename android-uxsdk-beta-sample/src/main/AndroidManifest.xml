@@ -58,7 +58,6 @@
         android:theme="@style/AppTheme"
         android:extractNativeLibs="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-
         <!-- DJI SDK -->
         <uses-library android:name="org.apache.http.legacy" android:required="false"/>
         <uses-library android:name="com.android.future.usb.accessory" />

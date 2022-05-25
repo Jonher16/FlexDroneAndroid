@@ -16,9 +16,11 @@ object SocketHandler {
 // "http://localhost:3000/" will not work
 // If you want to use your physical phone you could use the your ip address plus :3000
 // This will allow your Android Emulator and physical device at your home to connect to the server
+            val opts = IO.Options()
             var ip = Universal.getIp()
-            var address = "http://"+ip+":5001"
-            mSocket = IO.socket(address)
+            var address = "http://"+ip+":6001"
+
+            mSocket = IO.socket(address, opts)
         } catch (e: URISyntaxException) {
             System.out.println(e)
         }
